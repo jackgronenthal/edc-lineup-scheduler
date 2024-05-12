@@ -3,8 +3,22 @@
 import { Checkbox, Table, Button } from "flowbite-react";
 import Data from '@/data/lineup.json'
 
-export default function Component({ searchValue, searchDate }) {
-  return (
+export default function Component({ 
+    searchValue, 
+    searchDate, 
+    searchAllDates, 
+    addPerformanceToItinerary, 
+    removePerformanceFromItinerary, 
+    currentItineraryIds 
+}) {
+    
+    function handleItineraryInsertOrDelete(performance, mustSee) {
+        console.log(currentItineraryIds.includes(performance.id))
+        let fn = currentItineraryIds.includes(performance.id) ? removePerformanceFromItinerary : addPerformanceToItinerary
+        fn(performance, mustSee)
+    }
+  
+    return (
     <div className="overflow-x-auto">
       <Table hoverable>
         <Table.Head>
@@ -17,8 +31,15 @@ export default function Component({ searchValue, searchDate }) {
 
         <Table.Body className="divide-y">
 
-            {
-                Object.values(Data.performances[searchDate]).flat(Infinity).filter(({ artist, stage }) => searchValue ? artist.includes(searchValue) || stage.includes(searchValue) : true ).map(performancesByArtist => {
+            {   
+                ((() => {
+                        if(searchAllDates) {
+                            return [ ...Object.values(Data.performances["04/17/2024"]), ...Object.values(Data.performances["04/18/2024"]) ]
+                        } else {
+                            return Object.values(Data.performances[searchDate])
+                        }
+                    })()
+                ).flat(Infinity).filter(({ artist, stage }) => searchValue ? artist.includes(searchValue) || stage.includes(searchValue) : true ).map(performancesByArtist => {
                     return (
                         // eslint-disable-next-line
                         <Table.Row className="bg-white dark:border-gray-700 dark:bg-gray-800">
@@ -27,12 +48,13 @@ export default function Component({ searchValue, searchDate }) {
                             <Table.Cell>{performancesByArtist.startTime}</Table.Cell>
                             <Table.Cell>{performancesByArtist.endTime}</Table.Cell>
                             <Table.Cell>
-                            {/* <a href="#" className="font-medium text-cyan-600 hover:underline dark:text-cyan-500">
-                                Add
-                            </a> */}
-                            <div className="grid gap-4 grid-flow-col justify-stretch">
-                                <Button>Add</Button>
-                                <Button>Must See</Button>
+                            <div className="grid gap-4 grid-cols-2 grid-flow-col justify-stretch">
+                                <Button color="light" onClick={ () => { handleItineraryInsertOrDelete(performancesByArtist, false) } }>{
+                                    currentItineraryIds.includes(performancesByArtist.id) ? "Remove" : "Add"
+                                }</Button>
+                                <Button 
+                                    gradientDuoTone="pinkToOrange" 
+                                    onClick={ () => addPerformanceToItinerary(performancesByArtist, true) }>Must See</Button>
                             </div>
                             </Table.Cell>
                         </Table.Row>

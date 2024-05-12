@@ -12,7 +12,7 @@ export default function Component({ setSearchValue, randomArtist }) {
                 </div>
                 <div className="mt-3">
                     <TextInput id="artist" type="text" icon={HiSearch} placeholder={ randomArtist } required
-                        onChange={event => { setSearchValue(event.target.value) }}
+                        onChange={event => { setSearchValue(event.target.value.trim()) }}
                     />
                 </div>
             </div>

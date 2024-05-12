@@ -1,7 +1,9 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
-import { ThemeModeScript } from "flowbite-react";
+import { ThemeProvider } from "@/components/theme-provider";
+import DotPattern from "@/components/magicui/dot-pattern";
+import { cn } from "@/lib/utils";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -17,12 +19,16 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      {/* <head>
-        <ThemeModeScript />
-      </head> */}
+      
       <body className={inter.className}>
-        {children}
-       
+        <ThemeProvider
+            attribute="class"
+            defaultTheme="dark"
+            enableSystem
+            disableTransitionOnChange
+          >
+            {children}
+        </ThemeProvider>
       </body>
     </html>
   );

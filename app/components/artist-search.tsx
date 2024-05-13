@@ -14,12 +14,18 @@ import {
 
 import { useState, useEffect } from "react"
 import Data from '@/data/lineup.json'
+import type { PerformanceRecord } from "../dashboard/page"
 
-export function Search() {
+interface SearchProps {
+    setStagedResults: (prevState: PerformanceRecord[]) => any
+}
+
+export function Search({ setStagedResults }: SearchProps) {
 
     let [ search, setSearch ] = useState(String())
     let [ showSuggestions, setShowSuggestions ] = useState(true)
     let [ results, setResults ] = useState<JSX.Element[]>([])
+    
     
     const suggestedArtists = [ "Sara Landry", "Fisher", "LSDream" ] 
 
@@ -28,10 +34,27 @@ export function Search() {
     }
 
     function handleSelect(artist: string) {
-        console.log(artist)
+        let candidateResults = []
+        if(artist in Data.performances["04/17/2024"]) {
+            let performances = Object.fromEntries(Object.entries(Data.performances["04/17/2024"]))[artist]
+            candidateResults.push(...performances)
+        }
+
+        if(artist in Data.performances["04/18/2024"]) {
+            let performances = Object.fromEntries(Object.entries(Data.performances["04/18/2024"]))[artist]
+            candidateResults.push(...performances)
+        }
+
+        if(artist in Data.performances["04/19/2024"]) {
+            let performances = Object.fromEntries(Object.entries(Data.performances["04/19/2024"]))[artist]
+            candidateResults.push(...performances)
+        }
+
+        setStagedResults(candidateResults)
     }
 
     function matchArtistsAgainstSearch(query: string) {
+        console.log(query, Object.keys(Data.artists).filter(artist => artist.toLowerCase().includes(query.toLowerCase())))
         return Object.keys(Data.artists).filter(artist => artist.toLowerCase().includes(query.toLowerCase()))
     }
 

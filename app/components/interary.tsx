@@ -23,6 +23,7 @@ export type ItineraryEntry = {
     stage: string
     startTime: string
     endTime: string
+    favorited: string
 }
 
 interface DataTableProps<TData, TValue> {
@@ -30,7 +31,7 @@ interface DataTableProps<TData, TValue> {
     data: TData[]
 }
 
-const columns: ColumnDef<Payment>[] = [
+const columns: ColumnDef<ItineraryEntry>[] = [
     {
         accessorKey: "artist",
         header: "Artist",
@@ -42,6 +43,10 @@ const columns: ColumnDef<Payment>[] = [
     {
         accessorKey: "date",
         header: "Date",
+    },
+    {
+        accessorKey: "favorited",
+        header: "Must See"
     }
 ]
 
@@ -103,23 +108,12 @@ function DataTable<TData, TValue>({
     )
 }
 
-async function getData(): Promise<Payment[]> {
-    // Fetch data from your API here.
-    return [
-      {
-        artist: "728ed52f",
-        stage: "100",
-        date: "pending",
-      },
-      // ...
-    ]
-}
-
 interface ItineraryProps {
     itinerary?: PerformanceRecord[]
 }
 
 export function Itinerary({ itinerary }: ItineraryProps) {   
+    console.log(itinerary)
     return (
       <div className="container mx-auto py-10">
         <DataTable columns={columns} data={itinerary || []} />

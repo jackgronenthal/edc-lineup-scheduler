@@ -34,6 +34,7 @@ export type PerformanceRecord =  {
     artist: string
     date: string
     id: string
+    favorited: boolean
 }
 
 export default function BentoDemo() {
@@ -44,6 +45,7 @@ export default function BentoDemo() {
     let [ favoritedIds, setFavoritedIds     ] = useState<string[]>([])
 
     function addSetToItinerary(performance: PerformanceRecord) {
+        performance.favorited = false
         if(itineraryIds.includes(performance.id)) { return }
         setItineraryIds(prevState => [...prevState, performance.id])
         setItinerary(prevState => [...prevState, performance])
@@ -58,16 +60,38 @@ export default function BentoDemo() {
         setItinerary(prevState => prevState.filter(itineraryItem => itineraryItem.id != performance.id))
     }
 
+    function removeSetFromFavoriteIds(performance: PerformanceRecord) {
+        setFavoritedIds(prevState => prevState.filter(performanceId => performanceId != performance.id))
+        let curItineraryItem = itinerary.filter(it => it.id == performance.id)[0]
+        curItineraryItem.favorited = false
+        let otherPerformances = itinerary.filter(it => it.id != performance.id)
+        setItinerary([...otherPerformances, curItineraryItem])
+    }
+
     function addSetToFavoriteIds(performance: PerformanceRecord) {
 
         // Checking if event indicates removal of favorite
         if(favoritedIds.includes(performance.id)) {
-            setFavoritedIds(prevState => prevState.filter(performanceId => performanceId != performance.id))
+            removeSetFromFavoriteIds(performance)
         } else {
             setFavoritedIds(prevState => [ ...prevState, performance.id ])
-            if(itineraryIds.includes(performance.id)) return 
-            setItineraryIds(prevState => [...prevState, performance.id])
-            setItinerary(prevState => [...prevState, performance])
+            let curItineraryItem = itinerary.filter(it => it.id == performance.id)[0]
+
+            if(curItineraryItem) {
+                curItineraryItem.favorited = true
+            } else {
+                curItineraryItem = performance
+                curItineraryItem.favorited = true
+            }
+            
+            if(itineraryIds.includes(performance.id)) {
+                let otherPerformances = itinerary.filter(it => it.id != performance.id)
+                setItinerary([...otherPerformances, curItineraryItem])
+            } else {
+                setItineraryIds(prevState => [...prevState, performance.id])
+                performance.favorited = true
+                setItinerary(prevState => [...prevState, performance])
+            }
         }
     }
 
@@ -80,7 +104,6 @@ export default function BentoDemo() {
           cta: "",
           className: "col-span-3 lg:col-span-2",
           background: (
-              //       <Command className="absolute right-10 top-10 w-[70%] origin-top translate-x-0 border transition-all duration-300 ease-out [mask-image:linear-gradient(to_top,transparent_40%,#000_100%)] group-hover:-translate-x-10">
               <Search setStagedResults={ setStagedResults }/>
           ), 
         },

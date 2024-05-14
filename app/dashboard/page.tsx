@@ -34,13 +34,14 @@ export type PerformanceRecord =  {
     artist: string
     date: string
     id: string
-  }
+}
 
 export default function BentoDemo() {
 
-    let [ stagedResults, setStagedResults ] = useState<PerformanceRecord[]>([])
-    let [ itinerary, setItinerary ] = useState<PerformanceRecord[]>([])
-    let [ itineraryIds, setItineraryIds] = useState<string[]>([])
+    let [ stagedResults, setStagedResults   ] = useState<PerformanceRecord[]>([])
+    let [ itinerary, setItinerary           ] = useState<PerformanceRecord[]>([])
+    let [ itineraryIds, setItineraryIds     ] = useState<string[]>([])
+    let [ favoritedIds, setFavoritedIds     ] = useState<string[]>([])
 
     function addSetToItinerary(performance: PerformanceRecord) {
         if(itineraryIds.includes(performance.id)) { return }
@@ -50,8 +51,24 @@ export default function BentoDemo() {
 
     function removeSetFromItinerary(performance: PerformanceRecord) {
         if(!itineraryIds.includes(performance.id)) { return }
+        if(favoritedIds.includes(performance.id)) {
+            setFavoritedIds(prevState => prevState.filter(performanceId => performanceId != performance.id))
+        }
         setItineraryIds(prevState => prevState.filter(performanceId => performanceId != performance.id))
         setItinerary(prevState => prevState.filter(itineraryItem => itineraryItem.id != performance.id))
+    }
+
+    function addSetToFavoriteIds(performance: PerformanceRecord) {
+
+        // Checking if event indicates removal of favorite
+        if(favoritedIds.includes(performance.id)) {
+            setFavoritedIds(prevState => prevState.filter(performanceId => performanceId != performance.id))
+        } else {
+            setFavoritedIds(prevState => [ ...prevState, performance.id ])
+            if(itineraryIds.includes(performance.id)) return 
+            setItineraryIds(prevState => [...prevState, performance.id])
+            setItinerary(prevState => [...prevState, performance])
+        }
     }
 
     const features = [
@@ -75,7 +92,14 @@ export default function BentoDemo() {
           cta: "",
           className: "col-span-3 lg:col-span-2",
           background: (
-              <SearchResults searchResults={stagedResults} addSetToItinerary={ addSetToItinerary } itineraryIds={ itineraryIds } removeSetFromItinerary={ removeSetFromItinerary }/>
+              <SearchResults 
+                searchResults={stagedResults} 
+                addSetToItinerary={ addSetToItinerary } 
+                itineraryIds={ itineraryIds } 
+                favoritedIds={ favoritedIds }
+                removeSetFromItinerary={ removeSetFromItinerary }
+                addSetToFavoriteIds={ addSetToFavoriteIds }
+            />
           ), 
         },
         {
@@ -86,7 +110,6 @@ export default function BentoDemo() {
           cta: "",
           className: "lg:row-start-1 lg:row-end-3 lg:col-start-3 lg:col-end-4",
           background: (
-              //       <Command className="absolute right-10 top-10 w-[70%] origin-top translate-x-0 border transition-all duration-300 ease-out [mask-image:linear-gradient(to_top,transparent_40%,#000_100%)] group-hover:-translate-x-10">
               <Itinerary itinerary={ itinerary } />
           )
         },

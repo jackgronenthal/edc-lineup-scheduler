@@ -32,16 +32,16 @@ interface DataTableProps<TData, TValue> {
 
 const columns: ColumnDef<Payment>[] = [
     {
-      accessorKey: "artist",
-      header: "Artist",
+        accessorKey: "artist",
+        header: "Artist",
     },
     {
-      accessorKey: "stage",
-      header: "Stage",
+        accessorKey: "stage",
+        header: "Stage",
     },
     {
-      accessorKey: "date",
-      header: "Date",
+        accessorKey: "date",
+        header: "Date",
     }
 ]
 

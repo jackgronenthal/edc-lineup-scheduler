@@ -76,15 +76,8 @@ export default function BentoDemo() {
         } else {
             setFavoritedIds(prevState => [ ...prevState, performance.id ])
             let curItineraryItem = itinerary.filter(it => it.id == performance.id)[0]
-
-            if(curItineraryItem) {
-                curItineraryItem.favorited = true
-            } else {
-                curItineraryItem = performance
-                curItineraryItem.favorited = true
-            }
             
-            if(itineraryIds.includes(performance.id)) {
+            if(itineraryIds.includes(performance.id) && curItineraryItem) {
                 let otherPerformances = itinerary.filter(it => it.id != performance.id)
                 setItinerary([...otherPerformances, curItineraryItem])
             } else {

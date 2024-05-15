@@ -9,8 +9,9 @@ import {
     CommandItem,
     CommandList,
     CommandSeparator,
-    CommandShortcut,
-  } from "@/components/ui/command"
+    CommandShortcut
+} from "@/components/ui/command"
+import { Toggle } from "@/components/ui/toggle"
 
 import { useState, useEffect } from "react"
 import Data from '@/data/lineup.json'
@@ -25,6 +26,7 @@ export function Search({ setStagedResults }: SearchProps) {
     let [ search, setSearch ] = useState(String())
     let [ showSuggestions, setShowSuggestions ] = useState(true)
     let [ results, setResults ] = useState<JSX.Element[]>([])
+    let [ doPerformExactSearch, setDoPerformExactSearch] = useState(true)
     
     
     const suggestedArtists = [ "Sara Landry", "Fisher", "LSDream" ] 
@@ -83,6 +85,9 @@ export function Search({ setStagedResults }: SearchProps) {
 
     return (
         <div className="p-6">
+            <div className="flex my-4 justify-end w-full font-mono">
+                <Toggle variant="outline" pressed={doPerformExactSearch} onPressedChange={() => setDoPerformExactSearch(!doPerformExactSearch)}>Exact Match</Toggle>
+            </div>
             <Command onChange={(event: any) => handleInput(event.target.value)}>
                 <CommandInput placeholder="Search for an artist..." />
                 <CommandList>

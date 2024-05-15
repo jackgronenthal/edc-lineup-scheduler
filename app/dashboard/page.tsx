@@ -43,6 +43,9 @@ export default function BentoDemo() {
     let [ itinerary, setItinerary           ] = useState<PerformanceRecord[]>([])
     let [ itineraryIds, setItineraryIds     ] = useState<string[]>([])
     let [ favoritedIds, setFavoritedIds     ] = useState<string[]>([])
+    let [ doPerformExactSearch, setDoPerformExactSearch ] = useState(true)
+    let [ searchResults, setSearchResults   ] = useState<string[]>([])
+
 
     function addSetToItinerary(performance: PerformanceRecord) {
         performance.favorited = false
@@ -97,7 +100,11 @@ export default function BentoDemo() {
           cta: "",
           className: "col-span-3 lg:col-span-2",
           background: (
-              <Search setStagedResults={ setStagedResults }/>
+              <Search 
+                setStagedResults={ setStagedResults } 
+                doPerformExactSearch={ doPerformExactSearch } 
+                setDoPerformExactSearch={ setDoPerformExactSearch } 
+            />
           ), 
         },
         {
